@@ -1,0 +1,70 @@
+import heapq
+
+# Define a 5x5 grid
+# S = Start, G = Goal, X = obstacle, . = empty space
+grid = [
+    ['S', '.', '.', 'X', '.'],
+    ['.', 'X', '.', 'X', '.'],
+    ['.', 'X', '.', '.', '.'],
+    ['.', '.', 'X', 'X', '.'],
+    ['.', '.', '.', '.', 'G']
+]
+
+# Directions (up, down, left, right)
+directions = [(-1,0), (1,0), (0,-1), (0,1)]
+
+# Heuristic function (Manhattan distance)
+def heuristic(a, b):
+    return abs(a[0]-b[0]) + abs(a[1]-b[1])
+
+# A* function
+def a_star(grid, start, goal):
+    open_list = []
+    heapq.heappush(open_list, (0, start, [start]))  # (f, node, path)
+    g_score = {start: 0}
+
+    while open_list:
+        f, current, path = heapq.heappop(open_list)
+
+        if current == goal:
+            return path
+
+        for d in directions:
+            nr, nc = current[0] + d[0], current[1] + d[1]
+            if 0 <= nr < len(grid) and 0 <= nc < len(grid[0]) and grid[nr][nc] != 'X':
+                neighbor = (nr, nc)
+                new_g = g_score[current] + 1
+                if neighbor not in g_score or new_g < g_score[neighbor]:
+                    g_score[neighbor] = new_g
+                    f = new_g + heuristic(neighbor, goal)
+                    heapq.heappush(open_list, (f, neighbor, path + [neighbor]))
+
+    return None  # No path found
+
+# Locate start and goal positions
+for r in range(len(grid)):
+    for c in range(len(grid[0])):
+        if grid[r][c] == 'S':
+            start = (r, c)
+        elif grid[r][c] == 'G':
+            goal = (r, c)
+
+# Run the A* algorithm
+path = a_star(grid, start, goal)
+
+# Display result
+if path:
+    print("Shortest Path Found:")
+    for r in range(len(grid)):
+        for c in range(len(grid[0])):
+            if (r, c) == start:
+                print("S", end=" ")
+            elif (r, c) == goal:
+                print("G", end=" ")
+            elif (r, c) in path:
+                print("*", end=" ")
+            else:
+                print(grid[r][c], end=" ")
+        print()
+else:
+    print("No path found!")
