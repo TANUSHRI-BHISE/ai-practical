@@ -1,0 +1,48 @@
+# Graph representation using a dictionary (Adjacency List)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+# ---------- DEPTH FIRST SEARCH (DFS) ----------
+def dfs(graph, node, visited=None):
+    if visited is None:           # Step 1: Initialize visited set for first call
+        visited = set()
+    
+    print(node, end=" ")          # Step 2: Print current node (visited)
+    visited.add(node)             # Step 3: Mark node as visited
+    
+    # Step 4: Visit all unvisited neighbors recursively
+    for neighbour in graph[node]:
+        if neighbour not in visited:
+            dfs(graph, neighbour, visited)
+
+# ---------- BREADTH FIRST SEARCH (BFS) ----------
+from collections import deque     # deque = double-ended queue (fast for BFS)
+
+def bfs(graph, start):
+    visited = set()               # Step 1: Keep track of visited nodes
+    queue = deque([start])        # Step 2: Start queue with the starting node
+    
+    while queue:                  # Step 3: Loop until queue becomes empty
+        node = queue.popleft()    # Step 4: Pop first element from queue
+        
+        if node not in visited:
+            print(node, end=" ")  # Step 5: Visit and print node
+            visited.add(node)
+            
+            # Step 6: Add all unvisited neighbors to queue
+            for neighbour in graph[node]:
+                if neighbour not in visited:
+                    queue.append(neighbour)
+
+# ---------- MAIN EXECUTION ----------
+print("Depth First Search (starting from A):")
+dfs(graph, 'A')
+
+print("\nBreadth First Search (starting from A):")
+bfs(graph, 'A')
